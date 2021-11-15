@@ -1,3 +1,5 @@
+//remove array function
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import {
@@ -43,42 +45,21 @@ import {
 } from 'firebase/firestore';
 import { useFirebaseAuth } from '../hooks/useFirebaseAuth';
 import { auth, db } from '../lib/firebase';
+import NotLoggedin from '../components/NotLoggedIn';
 
-// function removeSkill(uid, skill) {
-// 	return firebase
-// 		.firestore()
-// 		.collection('users')
-// 		.doc(uid)
-// 		.update({
-// 			skills: firebase.firestore.FieldValue.arrayRemove(skill),
-// 		})
-// 		.then(window.location.reload(false));
-// }
-
-async function removeSkill(skill, uid) {
+function removeSkill(uid, skill) {
 	const userRef = doc(db, 'users', uid);
-	await updateDoc(userRef, {
+	return updateDoc(userRef, {
 		skills: arrayRemove(skill),
 	}).then(window.location.reload(false));
 }
 
-async function removeInterest(interest, uid) {
+function removeInterest(uid, interest) {
 	const userRef = doc(db, 'users', uid);
-	await updateDoc(userRef, {
+	return updateDoc(userRef, {
 		interests: arrayRemove(interest),
 	}).then(window.location.reload(false));
 }
-
-// function removeInterest(uid, interest) {
-// 	return firebase
-// 		.firestore()
-// 		.collection('users')
-// 		.doc(uid)
-// 		.update({
-// 			interests: firebase.firestore.FieldValue.arrayRemove(interest),
-// 		})
-// 		.then(window.location.reload(false));
-// }
 
 export default function Home() {
 	const { authenticated, logOut, uid } = useFirebaseAuth();
@@ -184,7 +165,10 @@ export default function Home() {
 																<TagLabel>{interest}</TagLabel>
 																<TagCloseButton
 																	onClick={() =>
-																		removeInterest(uid, skill)
+																		removeInterest(
+																			uid,
+																			interest
+																		)
 																	}
 																/>
 															</Tag>
@@ -305,25 +289,7 @@ export default function Home() {
 					</Box>
 				</>
 			) : (
-				<Box mt={20}>
-					<Center>
-						<Text textAlign='center' fontSize='xl' fontWeight='300'>
-							Login
-						</Text>
-					</Center>
-					<Center>
-						<Loginform />
-					</Center>
-					<Center>
-						<NextLink href='/signup'>
-							<Link m={2}>
-								<Text as='u' fontSize='xs' opacity='80%'>
-									New Here? Register
-								</Text>
-							</Link>
-						</NextLink>
-					</Center>
-				</Box>
+				<NotLoggedin />
 			)}
 		</>
 	);

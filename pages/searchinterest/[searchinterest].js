@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { query, where, getDocs } from 'firebase/firestore';
+import { query, where, getDocs, collection } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { useFirebaseAuth } from '../../hooks/useFirebaseAuth';
 import { useEffect, useState } from 'react';
@@ -46,6 +46,22 @@ const Card = (props) => {
 };
 
 export default function SearchInterest() {
+	async function Search(query) {
+		const upper = query.toUpperCase();
+		const lower = query.toLowerCase();
+		const firstLetter = query.charAt(0).toUpperCase() + query.slice(1);
+
+		const q = query(
+			collection(db, 'users'),
+			where('interests', 'array-contains-any', [upper, lower, firstLetter])
+		);
+		const snapshot = await getDocs(q);
+		const results = [];
+		snapshot.forEach((doc) => {
+			results.push({ id: doc.id, ...doc.data() });
+		});
+		return { results };
+	}
 	const { authenticated } = useFirebaseAuth();
 	const router = useRouter();
 	const searchreq = router.query.searchInterest;
@@ -62,30 +78,12 @@ export default function SearchInterest() {
 		}
 	};
 
-	async function Search(query) {
-
-		const upper = query.toUpperCase();
-		const lower = query.toLowerCase();
-		const firstLetter = query.charAt(0).toUpperCase() + query.slice(1);
-		const userRef = collection(db, 'users');
-		const q = query(
-			userRef, where('interests', 'array-contains-any', [upper, lower, firstLetter])
-		)
-		const snapshot=await getDocs(q)
-		const results=[]
-		snapshot.forEach((doc)=>{
-			results.push({ id: doc.id, ...doc.data()
-		})
-		return { results };
-	}
-
-	
-
-	// useEffect(() => {
-	// 	if (searchreq) {
-	// 		Search(searchreq).then(({ results }) => setResult(results));
-	// 	}
-	// }, [searchreq]);
+	useEffect(() => {
+		if (searchreq) {
+			Search(searchreq).then(({ results }) => setResult(results));
+			console.log(results);
+		}
+	}, [searchreq]);
 
 	return (
 		<>

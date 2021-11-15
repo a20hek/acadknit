@@ -1,5 +1,7 @@
 import { useRouter } from 'next/router';
-import firebase from 'firebase';
+import { query, where, getDocs, collection } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
+import { useFirebaseAuth } from '../../hooks/useFirebaseAuth';
 import { useEffect, useState } from 'react';
 import {
 	Box,
@@ -38,28 +40,7 @@ const Card = (props) => {
 };
 
 export default function SearchSkill() {
-	// async function Search(query) {
-	// 	const upper = query.toUpperCase();
-	// 	const lower = query.toLowerCase();
-	// 	const firstLetter = query.charAt(0).toUpperCase() + query.slice(1);
-
-	// 	const snapshot = await firebase
-	// 		.firestore()
-	// 		.collection('users')
-	// 		.where('skills', 'array-contains-any', [upper, lower, firstLetter])
-	// 		.get();
-	// 	const results = [];
-	// 	snapshot.forEach((doc) => {
-	// 		results.push({ id: doc.id, ...doc.data() });
-	// 	});
-	// 	return { results };
-	// }
-
-	const [isLoggedin, setIsLoggedin] = useState(false);
-	// firebase.auth().onAuthStateChanged(function (user) {
-	// 	setIsLoggedin(!!user);
-	// });
-
+	const { authenticated } = useFirebaseAuth();
 	const router = useRouter();
 	const searchreq = router.query.searchSkill;
 	const [result, setResult] = useState([]);
@@ -75,15 +56,32 @@ export default function SearchSkill() {
 		}
 	};
 
-	// useEffect(() => {
-	// 	if (searchreq) {
-	// 		Search(searchreq).then(({ results }) => setResult(results));
-	// 	}
-	// }, [searchreq]);
+	async function Search(query) {
+		const upper = query.toUpperCase();
+		const lower = query.toLowerCase();
+		const firstLetter = query.charAt(0).toUpperCase() + query.slice(1);
+		const snapshot = await getDocs(
+			query(
+				collection(db, 'users'),
+				where('interests', 'array-contains-any', [upper, lower, firstLetter])
+			)
+		);
+		const results = [];
+		snapshot.forEach((doc) => {
+			results.push({ id: doc.id, ...doc.data() });
+		});
+		return { results };
+	}
+
+	useEffect(() => {
+		if (searchreq) {
+			Search(searchreq).then(({ results }) => setResult(results));
+		}
+	}, [searchreq]);
 
 	return (
 		<>
-			{isLoggedin ? (
+			{authenticated ? (
 				<>
 					<Head>
 						<title>{searchreq} - Search | Acadknit</title>

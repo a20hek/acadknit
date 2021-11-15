@@ -1,6 +1,17 @@
-// import { useAuth } from '../lib/auth';
+import { useFirebaseAuth } from '../hooks/useFirebaseAuth';
+import { onAuthStateChanged } from 'firebase/auth';
+import {
+	collection,
+	query,
+	where,
+	getDocs,
+	doc,
+	updateDoc,
+	arrayUnion,
+	arrayRemove,
+} from 'firebase/firestore';
+import { auth, db } from '../lib/firebase';
 import { useState, useEffect } from 'react';
-// import firebase from 'firebase';
 import { useRouter } from 'next/router';
 import {
 	Button,
@@ -18,8 +29,7 @@ import { AddIcon } from '@chakra-ui/icons';
 import Head from 'next/head';
 
 export default function Editprofile() {
-	// const { user, signout, uid } = useAuth();
-	const [result, setResult] = useState([]);
+	const { uid, authenticated } = useFirebaseAuth();
 	const router = useRouter();
 
 	const [skills, setSkills] = useState([]);
@@ -38,36 +48,32 @@ export default function Editprofile() {
 		setInputinterest('');
 	};
 
-	// function arrUnion(skills, interests, uid) {
-	// 	return firebase
-	// 		.firestore()
-	// 		.collection('users')
-	// 		.doc(uid)
-	// 		.update({
-	// 			skills: firebase.firestore.FieldValue.arrayUnion(...skills),
-	// 			interests: firebase.firestore.FieldValue.arrayUnion(...interests),
-	// 		})
-	// 		.then(router.push('/home'));
-	// }
+	const [result, setResult] = useState([]);
 
-	// async function Userdata(uid) {
-	// 	const snapshot = await firebase
-	// 		.firestore()
-	// 		.collection('users')
-	// 		.where('uid', '==', uid)
-	// 		.get();
-	// 	const results = [];
-	// 	snapshot.forEach((doc) => {
-	// 		results.push({ id: doc.id, ...doc.data() });
-	// 	});
-	// 	return { results };
-	// }
+	async function Userdata(uid) {
+		const snapshot = await getDocs(query(collection(db, 'users'), where('uid', '==', uid)));
+		const results = [];
+		snapshot.forEach((doc) => {
+			results.push({ id: doc.id, ...doc.data() });
+		});
+		return { results };
+	}
 
-	// useEffect(() => {
-	// 	if (uid) {
-	// 		Userdata(uid).then(({ results }) => setResult(results));
-	// 	}
-	// }, [uid]);
+	useEffect(() => {
+		onAuthStateChanged(auth, (user) => {
+			if (user) {
+				Userdata(user.uid).then(({ results }) => setResult(results));
+			}
+		});
+	}, []);
+
+	async function arrUnion(skills, interests, uid) {
+		const userRef = doc(db, 'users', uid);
+		await updateDoc(userRef, {
+			skills: arrayUnion(...skills),
+			interests: arrayUnion(...interests),
+		}).then(router.push('/home'));
+	}
 
 	return (
 		<>
@@ -161,7 +167,7 @@ export default function Editprofile() {
 
 					<Center>
 						<Button
-							// onClick={() => arrUnion(skills, interests, user.uid)}
+							onClick={() => arrUnion(skills, interests, uid)}
 							w='60%'
 							mt={5}
 							bg='#0EB500'
