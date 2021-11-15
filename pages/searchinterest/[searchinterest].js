@@ -46,16 +46,16 @@ const Card = (props) => {
 };
 
 export default function SearchInterest() {
-	async function Search(query) {
-		const upper = query.toUpperCase();
-		const lower = query.toLowerCase();
-		const firstLetter = query.charAt(0).toUpperCase() + query.slice(1);
-
-		const q = query(
-			collection(db, 'users'),
-			where('interests', 'array-contains-any', [upper, lower, firstLetter])
+	async function Search(searchquery) {
+		const upper = searchquery.toUpperCase();
+		const lower = searchquery.toLowerCase();
+		const firstLetter = searchquery.charAt(0).toUpperCase() + searchquery.slice(1);
+		const snapshot = await getDocs(
+			query(
+				collection(db, 'users'),
+				where('interests', 'array-contains-any', [upper, lower, firstLetter])
+			)
 		);
-		const snapshot = await getDocs(q);
 		const results = [];
 		snapshot.forEach((doc) => {
 			results.push({ id: doc.id, ...doc.data() });
@@ -81,7 +81,7 @@ export default function SearchInterest() {
 	useEffect(() => {
 		if (searchreq) {
 			Search(searchreq).then(({ results }) => setResult(results));
-			console.log(results);
+			// console.log(results);
 		}
 	}, [searchreq]);
 
