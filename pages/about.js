@@ -7,7 +7,7 @@ export default function contact() {
 	return (
 		<>
 			<Head>
-				<title>Edit Profile | Acadknit </title>
+				<title>About | Acadknit </title>
 			</Head>
 			<Flex direction='column'>
 				<Flex>
