@@ -81,7 +81,6 @@ export default function SearchInterest() {
 	useEffect(() => {
 		if (searchreq) {
 			Search(searchreq).then(({ results }) => setResult(results));
-			// console.log(results);
 		}
 	}, [searchreq]);
 
