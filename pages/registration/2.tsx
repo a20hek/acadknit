@@ -44,7 +44,7 @@ export default function Registration2() {
 		await updateDoc(userRef, {
 			skills: arrayUnion(...skills),
 			interests: arrayUnion(...interests),
-		}).then(router.push('/home'));
+		}).then(() => router.push('/home'));
 	}
 
 	return (

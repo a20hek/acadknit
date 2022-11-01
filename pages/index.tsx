@@ -114,7 +114,6 @@ function LandingPage() {
 							h={10}
 							w={10}
 							color='#ffffff'
-							size='4xl'
 							cursor='pointer'
 							display={['flex', 'flex', 'none']}
 							onClick={() => setDisplay('flex')}
@@ -240,7 +239,7 @@ function LandingPage() {
 				</Modal>
 			</Box>
 			<Flex justifyContent='center' bgColor='#fff'>
-				<SimpleGrid columns={['1', '1', '2']}>
+				<SimpleGrid columns={[1, 1, 2]}>
 					<Flex direction='column' m='5%'>
 						<Center>
 							<Image src='/connect-icon.svg' alt='connect' />
