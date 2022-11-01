@@ -14,16 +14,25 @@ import { auth, db } from '../lib/firebase';
 import { useEffect, useState } from 'react';
 
 import cookie from 'js-cookie';
-import Router from 'next/router';
+import { useRouter } from 'next/router';
+
+interface User {
+	uid: string;
+	email: string;
+	provider?: string;
+	token?: string;
+}
 
 export const useFirebaseAuth = () => {
-	const [authenticated, setAuthenticated] = useState();
-	const [user, setUser] = useState(null);
-	const [loading, setLoading] = useState(true);
+	const [authenticated, setAuthenticated] = useState<boolean>(false);
+	const [user, setUser] = useState<User | null>(null);
+	const [loading, setLoading] = useState<boolean>(true);
+
+	const Router = useRouter();
 
 	const handleUser = async (rawUser) => {
 		if (rawUser) {
-			const user = await formatUser(rawUser);
+			const user: User = await formatUser(rawUser);
 			const { token, ...userWithoutToken } = user;
 			createUser(user.uid, userWithoutToken);
 			setUser(user);
@@ -34,7 +43,7 @@ export const useFirebaseAuth = () => {
 			setLoading(false);
 			return user;
 		} else {
-			setUser(false);
+			setUser(null);
 			cookie.remove('acad-auth');
 
 			setLoading(false);
@@ -43,13 +52,13 @@ export const useFirebaseAuth = () => {
 	};
 
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, (user) => {
+		const unsubscribe = onAuthStateChanged(auth, (user: User) => {
 			if (user) {
 				setAuthenticated(true);
 				setUser(user);
 			} else {
 				setAuthenticated(false);
-				setUser(false);
+				setUser(null);
 			}
 		});
 		return unsubscribe;
@@ -88,7 +97,7 @@ export const useFirebaseAuth = () => {
 			.then(() => {
 				handleUser(false);
 			})
-			.then(Router.push('/'));
+			.then(() => Router.push('/'));
 	};
 
 	const [uid, setUid] = useState(undefined);
