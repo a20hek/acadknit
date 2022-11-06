@@ -51,17 +51,14 @@ function removeSkill(uid, skill) {
 	const userRef = doc(db, 'users', uid);
 	return updateDoc(userRef, {
 		skills: arrayRemove(skill),
-	}).then(() => window.location.reload(false));
+	});
 }
-
-let a = 1;
-let b = 'ab';
 
 function removeInterest(uid, interest) {
 	const userRef = doc(db, 'users', uid);
 	return updateDoc(userRef, {
 		interests: arrayRemove(interest),
-	}).then(() => window.location.reload(false));
+	});
 }
 
 export default function Home() {
