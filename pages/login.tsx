@@ -1,6 +1,6 @@
 import React from 'react';
 import Loginform from '../components/Loginform';
-import { Box, Center, Link, Text } from '@chakra-ui/layout';
+import { Box, Center, Link, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import Head from 'next/head';
 

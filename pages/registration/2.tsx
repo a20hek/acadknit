@@ -162,7 +162,8 @@ export default function Registration2() {
 									variant='outline'
 									textColor='#ffffff'
 									_hover={{ bg: '#13DA01' }}
-									disabled={inputskill || inputinterest}>
+									// isDisabled={true ? inputskill || inputinterest : false}
+								>
 									Next
 								</Button>
 							</Center>

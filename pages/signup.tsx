@@ -20,6 +20,11 @@ import GoogleIcon from '../components/GoogleIcon';
 import NextLink from 'next/link';
 import Head from 'next/head';
 
+type FormValues = {
+	email: string;
+	password: string;
+};
+
 export default function Register() {
 	const [loading, setLoading] = useState(false);
 	const { signUpWithEmailAndPassword, signInWithGoogle, authenticated } = useFirebaseAuth();
@@ -30,11 +35,11 @@ export default function Register() {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm();
+	} = useForm<FormValues>();
 
-	const registeruser = ({ email, pass }) => {
+	const registeruser = ({ email, password }) => {
 		setLoading(true);
-		signUpWithEmailAndPassword(email, pass).catch((error) => {
+		signUpWithEmailAndPassword(email, password).catch((error) => {
 			setLoading(false);
 			toast({
 				title: 'An error occurred.',
@@ -70,9 +75,11 @@ export default function Register() {
 					<Stack
 						as='form'
 						onSubmit={handleSubmit((data) => registeruser(data))}
-						errors={errors}
+						// errors={errors}
 						padding={8}>
-						<FormControl isInvalid={errors.email && errors.email.message}>
+						<FormControl
+						// isInvalid={errors.email && errors.email.message}
+						>
 							<FormLabel htmlFor='email'>Email</FormLabel>
 
 							<Input
@@ -93,12 +100,14 @@ export default function Register() {
 								{errors.email && errors.email.message}
 							</FormErrorMessage>
 						</FormControl>
-						<FormControl isInvalid={errors.pass && errors.pass.message}>
+						<FormControl
+						// isInvalid={errors.password && errors.password.message}
+						>
 							<FormLabel htmlFor='Password'>Password</FormLabel>
 							<Input
 								w={['350px', '400px', '400px']}
 								type='password'
-								{...register('pass', {
+								{...register('password', {
 									required: 'Password is required',
 									minLength: {
 										value: 8,
@@ -108,7 +117,7 @@ export default function Register() {
 								bg='#ffffff'
 							/>
 							<FormErrorMessage>
-								{errors.pass && errors.pass.message}
+								{errors.password && errors.password.message}
 							</FormErrorMessage>
 						</FormControl>
 

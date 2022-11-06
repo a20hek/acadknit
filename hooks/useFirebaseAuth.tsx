@@ -32,7 +32,7 @@ export const useFirebaseAuth = () => {
 
 	const handleUser = async (rawUser) => {
 		if (rawUser) {
-			const user: User = await formatUser(rawUser);
+			const user = await formatUser(rawUser);
 			const { token, ...userWithoutToken } = user;
 			createUser(user.uid, userWithoutToken);
 			setUser(user);
@@ -95,7 +95,7 @@ export const useFirebaseAuth = () => {
 	const logOut = () => {
 		return signOut(auth)
 			.then(() => {
-				handleUser(false);
+				handleUser(null);
 			})
 			.then(() => Router.push('/'));
 	};

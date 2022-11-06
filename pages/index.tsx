@@ -214,7 +214,7 @@ function LandingPage() {
 						onKeyPress={handleKeyPress}
 					/>
 				</InputGroup>
-				<Modal isOpen={isOpen} onClose={onClose} width={['', '', '100%']}>
+				<Modal isOpen={isOpen} onClose={onClose} size={['', '', 'full']}>
 					<ModalOverlay />
 					<ModalContent>
 						<ModalHeader mt={3}>

@@ -175,7 +175,8 @@ export default function Editprofile() {
 							variant='outline'
 							textColor='#ffffff'
 							_hover={{ bg: '#13DA01' }}
-							disabled={inputskill || inputinterest}>
+							// isDisabled={(inputinterest||inputskill)}
+						>
 							Update
 						</Button>
 					</Center>

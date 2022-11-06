@@ -14,6 +14,11 @@ import { useForm } from 'react-hook-form';
 import { useFirebaseAuth } from '../hooks/useFirebaseAuth';
 import GoogleIcon from './GoogleIcon';
 
+type FormValues = {
+	email: string;
+	password: string;
+};
+
 export default function Loginform() {
 	const [loading, setLoading] = useState(false);
 	const toast = useToast();
@@ -24,11 +29,11 @@ export default function Loginform() {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm();
+	} = useForm<FormValues>();
 
-	const loginuser = ({ email, pass }) => {
+	const loginuser = ({ email, password }) => {
 		setLoading(true);
-		signInWithEmailAndPassword(email, pass).catch((error) => {
+		signInWithEmailAndPassword(email, password).catch((error) => {
 			setLoading(false);
 			toast({
 				title: 'An error occurred.',
@@ -42,8 +47,10 @@ export default function Loginform() {
 
 	return (
 		<>
-			<Stack as='form' onSubmit={handleSubmit((data) => loginuser(data))} errors={errors}>
-				<FormControl isInvalid={errors.email && errors.email.message}>
+			<Stack as='form' onSubmit={handleSubmit((data) => loginuser(data))}>
+				<FormControl
+				// isInvalid={errors.email && errors.email.message}
+				>
 					<FormLabel htmlFor='email'>Email</FormLabel>
 					<Input
 						w={['350px', '400px', '400px']}
@@ -61,13 +68,15 @@ export default function Loginform() {
 					/>
 					<FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
 				</FormControl>
-				<FormControl isInvalid={errors.pass && errors.pass.message}>
+				<FormControl
+				// isInvalid={errors.password && errors.password.message}
+				>
 					<FormLabel htmlFor='Password'>Password</FormLabel>
 					{/* <Center> */}
 					<Input
 						w={['350px', '400px', '400px']}
 						type='password'
-						{...register('pass', {
+						{...register('password', {
 							required: 'Password is required',
 							minLength: {
 								value: 8,
@@ -77,7 +86,9 @@ export default function Loginform() {
 						bg='#ffffff'
 					/>
 					{/* </Center> */}
-					<FormErrorMessage>{errors.pass && errors.pass.message}</FormErrorMessage>
+					<FormErrorMessage>
+						{errors.password && errors.password.message}
+					</FormErrorMessage>
 					<Center>
 						<Button
 							isLoading={loading}
